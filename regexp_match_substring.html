@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>add - bft</title>
+    <title>regexp_match_substring - bft</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Reference for the add function">
+    <meta name="description" content="Reference for the regexp_match_substring function">
     <link rel="stylesheet" href="./terminal.css">
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -28,75 +28,64 @@
     </header>
 
     <article class="container">
-        <h2>Add</h2>
+        <h2>Regexp_match_substring</h2>
         <section>
             <p>
-                Defined in <a href="https://github.com/substrait-io/substrait/blob/main/extensions/functions_datetime.yaml">functions_datetime.yaml</a>
+                Defined in <a href="https://github.com/substrait-io/substrait/blob/main/extensions/functions_string.yaml">functions_string.yaml</a>
             </p>
             <hr>
             <p>
-                Add two values.
+                Extract a substring that matches the given regular expression pattern. The regular expression pattern should follow the International Components for Unicode implementation (https://unicode-org.github.io/icu/userguide/strings/regexp.html). The occurrence of the pattern to be extracted is specified using the `occurrence` argument. Specifying `1` means the first occurrence will be extracted, `2` means the second occurrence, and so on. The `occurrence` argument should be a positive non-zero integer. The number of characters from the beginning of the string to begin starting to search for pattern matches can be specified using the `position` argument. Specifying `1` means to search for matches starting at the first character of the input string, `2` means the second character, and so on. The `position` argument should be a positive non-zero integer.
+The `case_sensitivity` option specifies case-sensitive or case-insensitive matching. Enabling the `multiline` option will treat the input string as multiple lines. This makes the `^` and `$` characters match at the beginning and end of any line, instead of just the beginning and end of the input string. Enabling the `dotall` option makes the `.` character match line terminator characters in a string.
+Behavior is undefined if the regex fails to compile, the occurrence value is out of range, or the position value is out of range.
             </p>
         </section>
         <hr>
         <section id="options">
             <h3>Options&nbsp;<a href="#options">&para;</a></h3>
             
-                <h4>Overflow</h4>
-                <p>Adding two integers can trigger an overflow when the result is outside the
-representable range of the type class. This option controls what happens when
-this overflow occurs.</p>
+                <h4>Case_sensitivity</h4>
+                No supplemental information for case_sensitivity
                 <dl>
                     
-                    <dt>SILENT</dt>
-                    <dd><p>If an overflow occurs then an integer value will be returned. The value is
-undefined. It may be any integer and can change from engine to engine or
-even from row to row within the same query.  The only constraint is that it
-must be a valid value for the result type class (e.g. adding two int16 cannot
-yield an int32 on overflow)</p>
+                    <dt>CASE_SENSITIVE</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
-                    <dt>SATURATE</dt>
-                    <dd><p>If an overflow occurs then the largest (for positive overflow) or smallest
-(for negative overflow) possible value for the type class will be returned.</p>
+                    <dt>CASE_INSENSITIVE</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
-                    <dt>ERROR</dt>
-                    <dd><p>If an overflow occurs then an error should be raised.</p>
+                    <dt>CASE_INSENSITIVE_ASCII</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
                 </dl>
             
-                <h4>Rounding</h4>
-                <p>Adding two floating point numbers can yield a result that is not exactly
-representable in the given type class. In this case the value will be rounded.
-Rounding behaviors are defined as part of the IEEE 754 standard.</p>
+                <h4>Multiline</h4>
+                No supplemental information for multiline
                 <dl>
                     
-                    <dt>TIE_TO_EVEN</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two
-values then round to the number whose least significant digit is even. Or,
-because we are working with binary digits, round to the number whose last digit
-is 0. This is the default behavior in many systems because it helps to avoid
-bias in rounding.</p>
+                    <dt>MULTILINE_DISABLED</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
-                    <dt>TIE_AWAY_FROM_ZERO</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two values
-then round to the number furthest from zero.</p>
+                    <dt>MULTILINE_ENABLED</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
-                    <dt>TRUNCATE</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two values
-then round to the value closest to zero.</p>
+                </dl>
+            
+                <h4>Dotall</h4>
+                No supplemental information for dotall
+                <dl>
+                    
+                    <dt>DOTALL_DISABLED</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
-                    <dt>CEILING</dt>
-                    <dd><p>Round to the value closest to positive infinity.</p>
-                    </dd>
-                    
-                    <dt>FLOOR</dt>
-                    <dd><p>Round to the value closest to negative infinity.</p>
+                    <dt>DOTALL_ENABLED</dt>
+                    <dd>Missing supplementary description
                     </dd>
                     
                 </dl>
@@ -107,29 +96,9 @@ then round to the value closest to zero.</p>
             <h3>Kernels&nbsp;<a href="#kernels">&para;</a></h3>
             <ul>
                 
-                <li class="bft-kernel"><span>add(i8, i8) -> i8 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>regexp_match_substring(varchar<L1>, varchar<L2>, i64, i64) -> varchar<L1> : [case_sensitivity, multiline, dotall]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
-                <li class="bft-kernel"><span>add(i16, i16) -> i16 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(i32, i32) -> i32 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(i64, i64) -> i64 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(fp32, fp32) -> fp32 : [rounding]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(fp64, fp64) -> fp64 : [rounding]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp, interval_year) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp_tz, interval_year, string) -> timestamp_tz : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(date, interval_year) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp, interval_day) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp_tz, interval_day) -> timestamp_tz : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(date, interval_day) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>regexp_match_substring(string, string, i64, i64) -> string : [case_sensitivity, multiline, dotall]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
             </ul>
         </section>
@@ -155,11 +124,8 @@ then round to the value closest to zero.</p>
             <dl class="dialect-definition" id="dialect-duckdb">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
+                        <dt>lookaround</dt>
+                        <dd>False</dd>
                     
                 
             </dl>
@@ -167,35 +133,17 @@ then round to the value closest to zero.</p>
             <dl class="dialect-definition" id="dialect-velox_presto">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-cudf">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
+                    <dt>Dialect isn't yet supported</dt>
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-sqlite">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
                     
                 
             </dl>
@@ -203,23 +151,11 @@ then round to the value closest to zero.</p>
             <dl class="dialect-definition" id="dialect-datafusion">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-postgres">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
                     
                 
             </dl>
@@ -229,41 +165,14 @@ then round to the value closest to zero.</p>
         <section id="details">
             <h3>Details&nbsp;<a href="#details">&para;</a></h3>
             
-                
-                    <h4>Other floating point exceptions</h4>
-                    <p>The IEEE 754 standard defines a number of exceptions beyond rounding. For
-example, division by zero, overflow, and underflow. However, these exceptions
-have default behaviors defined by IEEE 754 and, since no known engine deviates
-from these default values, these exceptions are not exposed as options. For more
-information on what happens in these cases refer to the IEEE 754 standard.</p>
-                
-                    <h4>Not commutative</h4>
-                    <p>Addition, the algebraic operation, is commutative.  So it may be tempting to
-believe the add function is commutative as well.  However, this is not true because
-of overflow.  For example, when working with int8 the result of
-add(add(120, 10), -5) will yield a different result than add(add(120, -5), 10)
-because the first will overflow and the second will not.</p>
-                
+                <p>No supplemental information about the details available</p>
             
         </section>
         <hr>
         <section id="properties">
             <h3>Properties&nbsp;<a href="#properties">&para;</a></h3>
             
-                <dl>
-                    
-                        <dt>NaN propagating</dt>
-                        <dd><p>If any of the inputs is NaN (and the other input is not null) then the output
-will be NaN</p></dd>
-                    
-                        <dt>Null propagating</dt>
-                        <dd><p>If any of the inputs is null then the output will be null</p></dd>
-                    
-                        <dt>Stateless</dt>
-                        <dd><p>The output will be the same regardless of the order of input rows. This is not
-guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
-                    
-                </dl>
+                <p>No supplemental information about the properties available</p>
             
         </section>
         <hr>
@@ -276,11 +185,11 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr>
                         
                         
-                        <th>arg1 (i64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (i64)</th>
+                        <th>arg2 (string)</th>
                         
-                        <th>result (i64)</th>
+                        <th>result (string)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -288,27 +197,12 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>120</td>
+                        <td>foobarboopzoo</td>
                         
-                        <td>5</td>
-                        
-                        
-                        <td>125</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
+                        <td>o{1,}</td>
                         
                         
-                        <td>100</td>
-                        
-                        <td>100</td>
-                        
-                        
-                        <td>200</td>
+                        <td>oo</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -318,12 +212,12 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>30000</td>
+                        <td>foobarboopzoo</td>
                         
-                        <td>30000</td>
+                        <td>o{1}</td>
                         
                         
-                        <td>60000</td>
+                        <td>o</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -333,12 +227,42 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>2000000000</td>
+                        <td>abcabcacb</td>
                         
-                        <td>2000000000</td>
+                        <td>[bc]</td>
                         
                         
-                        <td>4000000000</td>
+                        <td>b</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>abcdefghi</td>
+                        
+                        <td>(.*)c</td>
+                        
+                        
+                        <td>abc</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>abcdefghi</td>
+                        
+                        <td>(.*)c?</td>
+                        
+                        
+                        <td>abcdefghi</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -348,44 +272,33 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating exceptional floating point cases</caption>
+                <caption>Examples with lookahead</caption>
                 <thead>
                     <tr>
                         
+                        <th>lookaround</th>
                         
-                        <th>arg1 (fp64)</th>
                         
-                        <th>arg2 (fp64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>result (fp64)</th>
+                        <th>arg2 (string)</th>
+                        
+                        <th>result (string)</th>
                     </tr>
                 </thead>
                 <tbody>
                     
                     <tr class="bft-case">
                         
-                        
-                        <td>1.5e+308</td>
-                        
-                        <td>1.5e+308</td>
+                        <td>True</td>
                         
                         
-                        <td>inf</td>
+                        <td>100 dollars</td>
                         
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
+                        <td>\d+(?= dollars)</td>
                         
                         
-                        <td>-1.5e+308</td>
-                        
-                        <td>-1.5e+308</td>
-                        
-                        
-                        <td>-inf</td>
+                        <td>100</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -395,84 +308,80 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating overflow behavior</caption>
+                <caption>Examples with lookbehind</caption>
                 <thead>
                     <tr>
                         
-                        <th>overflow</th>
+                        <th>lookaround</th>
                         
                         
-                        <th>arg1 (i8)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (i8)</th>
+                        <th>arg2 (string)</th>
                         
-                        <th>result (i8)</th>
+                        <th>result (string)</th>
                     </tr>
                 </thead>
                 <tbody>
                     
                     <tr class="bft-case">
                         
-                        <td>ERROR</td>
+                        <td>True</td>
                         
                         
-                        <td>120</td>
+                        <td>USD100</td>
                         
-                        <td>10</td>
-                        
-                        
-                        <td>ERROR</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
+                        <td>(?<=USD)\d{3}</td>
                         
                         
-                        <td>30000</td>
-                        
-                        <td>30000</td>
-                        
-                        
-                        <td>ERROR</td>
+                        <td>100</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
                         <td colspan="4"/>
                     </tr>
+                    </tbody>
+            </table>
+            
+            <table>
+                <caption>Examples with metacharacters</caption>
+                <thead>
+                    <tr>
+                        
+                        
+                        <th>arg1 (string)</th>
+                        
+                        <th>arg2 (string)</th>
+                        
+                        <th>result (string)</th>
+                    </tr>
+                </thead>
+                <tbody>
                     
                     <tr class="bft-case">
                         
-                        <td>ERROR</td>
                         
+                        <td>abc1abc</td>
                         
-                        <td>2000000000</td>
+                        <td>\d</td>
                         
-                        <td>2000000000</td>
-                        
-                        
-                        <td>ERROR</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
-                        
-                        
-                        <td>9223372036854775807</td>
                         
                         <td>1</td>
                         
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
                         
-                        <td>ERROR</td>
+                        
+                        <td>abc1abc</td>
+                        
+                        <td>\D</td>
+                        
+                        
+                        <td>a</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -481,15 +390,13 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SATURATE</td>
+                        
+                        <td>abc def ghi</td>
+                        
+                        <td>\s</td>
                         
                         
-                        <td>120</td>
-                        
-                        <td>10</td>
-                        
-                        
-                        <td>127</td>
+                        <td> </td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -498,15 +405,13 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SATURATE</td>
+                        
+                        <td>abc def ghi</td>
+                        
+                        <td>\S</td>
                         
                         
-                        <td>-120</td>
-                        
-                        <td>-10</td>
-                        
-                        
-                        <td>-128</td>
+                        <td>a</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -515,15 +420,58 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SILENT</td>
+                        
+                        <td>abc def ghi</td>
+                        
+                        <td>\S+</td>
                         
                         
-                        <td>120</td>
+                        <td>abc</td>
                         
-                        <td>10</td>
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
                         
                         
-                        <td>UNDEFINED</td>
+                        <td>abc def ghi</td>
+                        
+                        <td>\w</td>
+                        
+                        
+                        <td>a</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>abc def ghi</td>
+                        
+                        <td>\w+</td>
+                        
+                        
+                        <td>abc</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>abc def ghi,</td>
+                        
+                        <td>\W</td>
+                        
+                        
+                        <td> </td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -533,50 +481,33 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating floating point rounding behavior</caption>
+                <caption>Examples with negative lookahead</caption>
                 <thead>
                     <tr>
                         
-                        <th>rounding</th>
+                        <th>lookaround</th>
                         
                         
-                        <th>arg1 (fp32)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (fp32)</th>
+                        <th>arg2 (string)</th>
                         
-                        <th>result (fp32)</th>
+                        <th>result (string)</th>
                     </tr>
                 </thead>
                 <tbody>
                     
                     <tr class="bft-case">
                         
-                        <td>TIE_TO_EVEN</td>
+                        <td>True</td>
                         
                         
-                        <td>4.5</td>
+                        <td>100 pesos</td>
                         
-                        <td>2.5000007152557373</td>
-                        
-                        
-                        <td>7.000000953674316</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>FLOOR</td>
+                        <td>\d+(?!\d| dollars)</td>
                         
                         
-                        <td>4.5</td>
-                        
-                        <td>2.5000007152557373</td>
-                        
-                        
-                        <td>7.000000476837158</td>
+                        <td>100</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -586,16 +517,52 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating behavior of different data types</caption>
+                <caption>Examples with negative lookbehind</caption>
+                <thead>
+                    <tr>
+                        
+                        <th>lookaround</th>
+                        
+                        
+                        <th>arg1 (string)</th>
+                        
+                        <th>arg2 (string)</th>
+                        
+                        <th>result (string)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr class="bft-case">
+                        
+                        <td>True</td>
+                        
+                        
+                        <td>JPY100</td>
+                        
+                        <td>\d{3}(?<!USD\d{3})</td>
+                        
+                        
+                        <td>100</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    </tbody>
+            </table>
+            
+            <table>
+                <caption>Examples with null as input</caption>
                 <thead>
                     <tr>
                         
                         
-                        <th>arg1 (fp64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (fp64)</th>
+                        <th>arg2 (string)</th>
                         
-                        <th>result (fp64)</th>
+                        <th>result (string)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -603,12 +570,27 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>4.5</td>
+                        <td>Hello</td>
                         
-                        <td>2.5000007152557373</td>
+                        <td>None</td>
                         
                         
-                        <td>7.000000715255737</td>
+                        <td>CASELITERAL(VALUE=NONE, TYPE='STRING')</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>None</td>
+                        
+                        <td> </td>
+                        
+                        
+                        <td>CASELITERAL(VALUE=NONE, TYPE='STRING')</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -647,7 +629,11 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  null,
+                  "The dialect duckdb expects lookaround=False but lookaround=True was requested",
+                
+                
+                
+                  "The dialect duckdb expects lookaround=False but lookaround=True was requested",
                 
                 
                 
@@ -667,15 +653,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect duckdb expects overflow=ERROR but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect duckdb expects overflow=ERROR but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect duckdb expects overflow=ERROR but overflow=SILENT was requested",
+                  null,
                 
                 
                 
@@ -683,7 +661,23 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect duckdb expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  "The dialect duckdb expects lookaround=False but lookaround=True was requested",
+                
+                
+                
+                  "The dialect duckdb expects lookaround=False but lookaround=True was requested",
+                
+                
+                
+                  null,
                 
                 
                 
@@ -692,26 +686,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -724,15 +698,15 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i16, i16) -> i16",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i32, i32) -> i32",
+                  null,
                 
                 
                 
@@ -748,15 +722,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> error",
-                
-                
-                
-                  "The dialect velox_presto does not support the kernel add(i16, i16) -> error",
-                
-                
-                
-                  "The dialect velox_presto does not support the kernel add(i32, i32) -> error",
+                  null,
                 
                 
                 
@@ -764,23 +730,43 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> undefined",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -789,26 +775,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                false,
-                
-                false,
-                
-                false,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -821,95 +787,87 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=SATURATE was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=SATURATE was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
                 
                 
             ],
             kernels: [
                 
-                true,
+                false,
                 
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
+                false,
                 
             ]
         },
@@ -942,27 +900,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=SATURATE was requested",
+                  null,
                 
                 
                 
@@ -970,11 +908,43 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect sqlite does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
-                  "The dialect sqlite does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -983,26 +953,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -1039,27 +989,11 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
+                  null,
                 
                 
                 
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=SATURATE was requested",
+                  null,
                 
                 
                 
@@ -1071,7 +1005,35 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect datafusion expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1080,26 +1042,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -1112,7 +1054,23 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1136,7 +1094,15 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> error",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1152,23 +1118,11 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
-                
-                
-                
-                  "The dialect postgres does not support the kernel add(i8, i8) -> undefined",
-                
-                
-                
-                  "The dialect postgres does not support the kernel add(fp32, fp32) -> fp32",
-                
-                
-                
-                  "The dialect postgres does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
@@ -1177,26 +1131,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 

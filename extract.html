@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>add - bft</title>
+    <title>extract - bft</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Reference for the add function">
+    <meta name="description" content="Reference for the extract function">
     <link rel="stylesheet" href="./terminal.css">
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -28,78 +28,29 @@
     </header>
 
     <article class="container">
-        <h2>Add</h2>
+        <h2>Extract</h2>
         <section>
             <p>
                 Defined in <a href="https://github.com/substrait-io/substrait/blob/main/extensions/functions_datetime.yaml">functions_datetime.yaml</a>
             </p>
             <hr>
             <p>
-                Add two values.
+                Extract portion of a date/time value. * YEAR Return the year of the value. * ISO_YEAR Return the ISO 8601 week-numbering year. First week of an ISO year has the majority (4 or more) of its
+  days in January.
+* US_YEAR Return US epidemiological year. First week of US epidemiological year has the majority (4 or more) of
+  its days in January. Last week of US epidemiological year has the year's last Wednesday in it.
+  US epidemiological week starts on Sunday.
+* QUARTER Return the quarter from the value (1-4). * MONTH Return the month from value (1-12). * DAY Return the day of the month (1-31). * DAY_OF_YEAR Return the day of year (1 to 366). January 1st maps to day number 1, February 1st to 32, etc. * MONDAY_DAY_OF_WEEK Return the day of week from Monday (1) to Sunday (7). * SUNDAY_DAY_OF_WEEK Return the day of week from Sunday (1) to Saturday (7). * MONDAY_WEEK Return week of year number (1-53). First week starts on first Monday of January. * SUNDAY_WEEK Return week of year number (1-53). First week starts on first Sunday of January. * ISO_WEEK Return ISO week of year number (1-53). First ISO calendar week has the majority (4 or more) of its
+  days in January. ISO week starts on Monday.
+* US_WEEK Return ISO-like week of year number (1-53). First US calendar week has the majority (4 or more) of its
+  days in January. US week starts on Sunday.
+* HOUR Return the hour (0-23). * MINUTE Return the minute (0-59). * SECOND Return the second (0-59). * MILLISECOND Return number of milliseconds since the last full second. * MICROSECOND Return number of microseconds since the last full millisecond. * SUBSECOND Return number of microseconds since the last full second of the given timestamp. * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds. * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
+Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones). Examples: "Pacific/Marquesas", "Etc/GMT+1". If timezone is invalid an error is thrown.
             </p>
         </section>
         <hr>
         <section id="options">
             <h3>Options&nbsp;<a href="#options">&para;</a></h3>
-            
-                <h4>Overflow</h4>
-                <p>Adding two integers can trigger an overflow when the result is outside the
-representable range of the type class. This option controls what happens when
-this overflow occurs.</p>
-                <dl>
-                    
-                    <dt>SILENT</dt>
-                    <dd><p>If an overflow occurs then an integer value will be returned. The value is
-undefined. It may be any integer and can change from engine to engine or
-even from row to row within the same query.  The only constraint is that it
-must be a valid value for the result type class (e.g. adding two int16 cannot
-yield an int32 on overflow)</p>
-                    </dd>
-                    
-                    <dt>SATURATE</dt>
-                    <dd><p>If an overflow occurs then the largest (for positive overflow) or smallest
-(for negative overflow) possible value for the type class will be returned.</p>
-                    </dd>
-                    
-                    <dt>ERROR</dt>
-                    <dd><p>If an overflow occurs then an error should be raised.</p>
-                    </dd>
-                    
-                </dl>
-            
-                <h4>Rounding</h4>
-                <p>Adding two floating point numbers can yield a result that is not exactly
-representable in the given type class. In this case the value will be rounded.
-Rounding behaviors are defined as part of the IEEE 754 standard.</p>
-                <dl>
-                    
-                    <dt>TIE_TO_EVEN</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two
-values then round to the number whose least significant digit is even. Or,
-because we are working with binary digits, round to the number whose last digit
-is 0. This is the default behavior in many systems because it helps to avoid
-bias in rounding.</p>
-                    </dd>
-                    
-                    <dt>TIE_AWAY_FROM_ZERO</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two values
-then round to the number furthest from zero.</p>
-                    </dd>
-                    
-                    <dt>TRUNCATE</dt>
-                    <dd><p>Round to the nearest value. If the number is exactly halfway between two values
-then round to the value closest to zero.</p>
-                    </dd>
-                    
-                    <dt>CEILING</dt>
-                    <dd><p>Round to the value closest to positive infinity.</p>
-                    </dd>
-                    
-                    <dt>FLOOR</dt>
-                    <dd><p>Round to the value closest to negative infinity.</p>
-                    </dd>
-                    
-                </dl>
             
         </section>
         <hr>
@@ -107,29 +58,13 @@ then round to the value closest to zero.</p>
             <h3>Kernels&nbsp;<a href="#kernels">&para;</a></h3>
             <ul>
                 
-                <li class="bft-kernel"><span>add(i8, i8) -> i8 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>extract(YEAR|ISO_YEAR|US_YEAR|QUARTER|MONTH|DAY|DAY_OF_YEAR|MONDAY_DAY_OF_WEEK|SUNDAY_DAY_OF_WEEK|MONDAY_WEEK|SUNDAY_WEEK|ISO_WEEK|US_WEEK|HOUR|MINUTE|SECOND|MILLISECOND|MICROSECOND|SUBSECOND|UNIX_TIME|TIMEZONE_OFFSET, timestamp_tz, string) -> i64 : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
-                <li class="bft-kernel"><span>add(i16, i16) -> i16 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>extract(YEAR|ISO_YEAR|US_YEAR|QUARTER|MONTH|DAY|DAY_OF_YEAR|MONDAY_DAY_OF_WEEK|SUNDAY_DAY_OF_WEEK|MONDAY_WEEK|SUNDAY_WEEK|ISO_WEEK|US_WEEK|HOUR|MINUTE|SECOND|MILLISECOND|MICROSECOND|SUBSECOND|UNIX_TIME, timestamp) -> i64 : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
-                <li class="bft-kernel"><span>add(i32, i32) -> i32 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>extract(YEAR|ISO_YEAR|US_YEAR|QUARTER|MONTH|DAY|DAY_OF_YEAR|MONDAY_DAY_OF_WEEK|SUNDAY_DAY_OF_WEEK|MONDAY_WEEK|SUNDAY_WEEK|ISO_WEEK|US_WEEK|UNIX_TIME, date) -> i64 : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
-                <li class="bft-kernel"><span>add(i64, i64) -> i64 : [overflow]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(fp32, fp32) -> fp32 : [rounding]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(fp64, fp64) -> fp64 : [rounding]</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp, interval_year) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp_tz, interval_year, string) -> timestamp_tz : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(date, interval_year) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp, interval_day) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(timestamp_tz, interval_day) -> timestamp_tz : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
-                
-                <li class="bft-kernel"><span>add(date, interval_day) -> timestamp : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
+                <li class="bft-kernel"><span>extract(HOUR|MINUTE|SECOND|MILLISECOND|MICROSECOND|SUBSECOND, time) -> i64 : []</span><span hidden>&nbsp;(not supported by dialect)</span></li>
                 
             </ul>
         </section>
@@ -155,47 +90,23 @@ then round to the value closest to zero.</p>
             <dl class="dialect-definition" id="dialect-duckdb">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-velox_presto">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-cudf">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
+                    <dt>Dialect isn't yet supported</dt>
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-sqlite">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
                     
                 
             </dl>
@@ -203,23 +114,11 @@ then round to the value closest to zero.</p>
             <dl class="dialect-definition" id="dialect-datafusion">
                 
                     
-                        <dt>overflow</dt>
-                        <dd>SILENT</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
-                    
                 
             </dl>
             
             <dl class="dialect-definition" id="dialect-postgres">
                 
-                    
-                        <dt>overflow</dt>
-                        <dd>ERROR</dd>
-                    
-                        <dt>rounding</dt>
-                        <dd>TIE_TO_EVEN</dd>
                     
                 
             </dl>
@@ -229,41 +128,14 @@ then round to the value closest to zero.</p>
         <section id="details">
             <h3>Details&nbsp;<a href="#details">&para;</a></h3>
             
-                
-                    <h4>Other floating point exceptions</h4>
-                    <p>The IEEE 754 standard defines a number of exceptions beyond rounding. For
-example, division by zero, overflow, and underflow. However, these exceptions
-have default behaviors defined by IEEE 754 and, since no known engine deviates
-from these default values, these exceptions are not exposed as options. For more
-information on what happens in these cases refer to the IEEE 754 standard.</p>
-                
-                    <h4>Not commutative</h4>
-                    <p>Addition, the algebraic operation, is commutative.  So it may be tempting to
-believe the add function is commutative as well.  However, this is not true because
-of overflow.  For example, when working with int8 the result of
-add(add(120, 10), -5) will yield a different result than add(add(120, -5), 10)
-because the first will overflow and the second will not.</p>
-                
+                <p>No supplemental information about the details available</p>
             
         </section>
         <hr>
         <section id="properties">
             <h3>Properties&nbsp;<a href="#properties">&para;</a></h3>
             
-                <dl>
-                    
-                        <dt>NaN propagating</dt>
-                        <dd><p>If any of the inputs is NaN (and the other input is not null) then the output
-will be NaN</p></dd>
-                    
-                        <dt>Null propagating</dt>
-                        <dd><p>If any of the inputs is null then the output will be null</p></dd>
-                    
-                        <dt>Stateless</dt>
-                        <dd><p>The output will be the same regardless of the order of input rows. This is not
-guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
-                    
-                </dl>
+                <p>No supplemental information about the properties available</p>
             
         </section>
         <hr>
@@ -271,14 +143,14 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             <h3>Examples&nbsp;<a href="#examples">&para;</a></h3>
             
             <table>
-                <caption>Basic examples without any special cases</caption>
+                <caption>examples using the date type</caption>
                 <thead>
                     <tr>
                         
                         
-                        <th>arg1 (i64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (i64)</th>
+                        <th>arg2 (date)</th>
                         
                         <th>result (i64)</th>
                     </tr>
@@ -288,27 +160,12 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>120</td>
+                        <td>YEAR</td>
                         
-                        <td>5</td>
-                        
-                        
-                        <td>125</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
+                        <td>2020-12-31</td>
                         
                         
-                        <td>100</td>
-                        
-                        <td>100</td>
-                        
-                        
-                        <td>200</td>
+                        <td>2020</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -318,12 +175,12 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>30000</td>
+                        <td>MONTH</td>
                         
-                        <td>30000</td>
+                        <td>2020-12-31</td>
                         
                         
-                        <td>60000</td>
+                        <td>12</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -333,12 +190,12 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>2000000000</td>
+                        <td>DAY</td>
                         
-                        <td>2000000000</td>
+                        <td>2020-12-31</td>
                         
                         
-                        <td>4000000000</td>
+                        <td>31</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -348,16 +205,16 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating exceptional floating point cases</caption>
+                <caption>examples using the time type</caption>
                 <thead>
                     <tr>
                         
                         
-                        <th>arg1 (fp64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (fp64)</th>
+                        <th>arg2 (time)</th>
                         
-                        <th>result (fp64)</th>
+                        <th>result (i64)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -365,114 +222,27 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>1.5e+308</td>
+                        <td>HOUR</td>
                         
-                        <td>1.5e+308</td>
+                        <td>01:02:03+1559</td>
                         
-                        
-                        <td>inf</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        
-                        <td>-1.5e+308</td>
-                        
-                        <td>-1.5e+308</td>
-                        
-                        
-                        <td>-inf</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    </tbody>
-            </table>
-            
-            <table>
-                <caption>Examples demonstrating overflow behavior</caption>
-                <thead>
-                    <tr>
-                        
-                        <th>overflow</th>
-                        
-                        
-                        <th>arg1 (i8)</th>
-                        
-                        <th>arg2 (i8)</th>
-                        
-                        <th>result (i8)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
-                        
-                        
-                        <td>120</td>
-                        
-                        <td>10</td>
-                        
-                        
-                        <td>ERROR</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
-                        
-                        
-                        <td>30000</td>
-                        
-                        <td>30000</td>
-                        
-                        
-                        <td>ERROR</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
-                        
-                        
-                        <td>2000000000</td>
-                        
-                        <td>2000000000</td>
-                        
-                        
-                        <td>ERROR</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>ERROR</td>
-                        
-                        
-                        <td>9223372036854775807</td>
                         
                         <td>1</td>
                         
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
                         
-                        <td>ERROR</td>
+                        
+                        <td>MINUTE</td>
+                        
+                        <td>01:02:03+1559</td>
+                        
+                        
+                        <td>2</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -481,15 +251,13 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SATURATE</td>
+                        
+                        <td>SECOND</td>
+                        
+                        <td>01:02:03+1559</td>
                         
                         
-                        <td>120</td>
-                        
-                        <td>10</td>
-                        
-                        
-                        <td>127</td>
+                        <td>3</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -498,15 +266,13 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SATURATE</td>
+                        
+                        <td>MILLISECOND</td>
+                        
+                        <td>01:02:03+1559</td>
                         
                         
-                        <td>-120</td>
-                        
-                        <td>-10</td>
-                        
-                        
-                        <td>-128</td>
+                        <td>3000</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -515,68 +281,13 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     
                     <tr class="bft-case">
                         
-                        <td>SILENT</td>
+                        
+                        <td>MICROSECOND</td>
+                        
+                        <td>01:02:03.45</td>
                         
                         
-                        <td>120</td>
-                        
-                        <td>10</td>
-                        
-                        
-                        <td>UNDEFINED</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    </tbody>
-            </table>
-            
-            <table>
-                <caption>Examples demonstrating floating point rounding behavior</caption>
-                <thead>
-                    <tr>
-                        
-                        <th>rounding</th>
-                        
-                        
-                        <th>arg1 (fp32)</th>
-                        
-                        <th>arg2 (fp32)</th>
-                        
-                        <th>result (fp32)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>TIE_TO_EVEN</td>
-                        
-                        
-                        <td>4.5</td>
-                        
-                        <td>2.5000007152557373</td>
-                        
-                        
-                        <td>7.000000953674316</td>
-                        
-                    </tr>
-                    <tr class="bft-error-case bft-case-err-message" hidden>
-                        <td colspan="4"/>
-                    </tr>
-                    
-                    <tr class="bft-case">
-                        
-                        <td>FLOOR</td>
-                        
-                        
-                        <td>4.5</td>
-                        
-                        <td>2.5000007152557373</td>
-                        
-                        
-                        <td>7.000000476837158</td>
+                        <td>3450000</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -586,16 +297,16 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             </table>
             
             <table>
-                <caption>Examples demonstrating behavior of different data types</caption>
+                <caption>examples using the timestamp and timestamptz types</caption>
                 <thead>
                     <tr>
                         
                         
-                        <th>arg1 (fp64)</th>
+                        <th>arg1 (string)</th>
                         
-                        <th>arg2 (fp64)</th>
+                        <th>arg2 (timestamp)</th>
                         
-                        <th>result (fp64)</th>
+                        <th>result (i64)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -603,12 +314,267 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                     <tr class="bft-case">
                         
                         
-                        <td>4.5</td>
+                        <td>YEAR</td>
                         
-                        <td>2.5000007152557373</td>
+                        <td>2016-12-31 13:30:15</td>
                         
                         
-                        <td>7.000000715255737</td>
+                        <td>2016</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>ISOYEAR</td>
+                        
+                        <td>2016-01-01 13:30:15</td>
+                        
+                        
+                        <td>2015</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>QUARTER</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>4</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>MONTH</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>12</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>WEEK</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>52</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>DAY</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>31</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>ISODOW</td>
+                        
+                        <td>2016-12-25 13:30:15</td>
+                        
+                        
+                        <td>7</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>DOW</td>
+                        
+                        <td>2016-12-25 13:30:15</td>
+                        
+                        
+                        <td>CASELITERAL(VALUE=0, TYPE='I64')</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>DOY</td>
+                        
+                        <td>2016-12-25 13:30:15</td>
+                        
+                        
+                        <td>360</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>HOUR</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>13</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>HOUR</td>
+                        
+                        <td>1999-01-08 04:05:06 PST</td>
+                        
+                        
+                        <td>12</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>HOUR</td>
+                        
+                        <td>2016-12-31 13:30:15-10</td>
+                        
+                        
+                        <td>23</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>MINUTE</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>30</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>SECOND</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>15</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>MILLISECONDS</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>15000</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>MICROSECONDS</td>
+                        
+                        <td>2016-12-31 13:30:15.22</td>
+                        
+                        
+                        <td>15220000</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>TIMEZONE</td>
+                        
+                        <td>1999-01-08 04:05:06 PST</td>
+                        
+                        
+                        <td>CASELITERAL(VALUE=0, TYPE='I64')</td>
+                        
+                    </tr>
+                    <tr class="bft-error-case bft-case-err-message" hidden>
+                        <td colspan="4"/>
+                    </tr>
+                    
+                    <tr class="bft-case">
+                        
+                        
+                        <td>EPOCH</td>
+                        
+                        <td>2016-12-31 13:30:15</td>
+                        
+                        
+                        <td>1483191015</td>
                         
                     </tr>
                     <tr class="bft-error-case bft-case-err-message" hidden>
@@ -667,15 +633,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect duckdb expects overflow=ERROR but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect duckdb expects overflow=ERROR but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect duckdb expects overflow=ERROR but overflow=SILENT was requested",
+                  null,
                 
                 
                 
@@ -683,7 +641,55 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect duckdb expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -692,22 +698,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -724,15 +714,15 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i16, i16) -> i16",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i32, i32) -> i32",
+                  null,
                 
                 
                 
@@ -748,15 +738,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> error",
-                
-                
-                
-                  "The dialect velox_presto does not support the kernel add(i16, i16) -> error",
-                
-                
-                
-                  "The dialect velox_presto does not support the kernel add(i32, i32) -> error",
+                  null,
                 
                 
                 
@@ -764,23 +746,71 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(i8, i8) -> undefined",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
-                  "The dialect velox_presto does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -789,22 +819,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                false,
-                
-                false,
-                
-                false,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -821,95 +835,119 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=ERROR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=SATURATE was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects overflow=SILENT but overflow=SATURATE was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
                 
                 
                 
-                  "The dialect cudf expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  "There is no dialect information for this function",
                 
                 
                 
-                  null,
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
+                
+                
+                
+                  "There is no dialect information for this function",
                 
                 
             ],
             kernels: [
                 
-                true,
+                false,
                 
-                true,
+                false,
                 
-                true,
+                false,
                 
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
+                false,
                 
             ]
         },
@@ -942,27 +980,7 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect sqlite expects overflow=SILENT but overflow=SATURATE was requested",
+                  null,
                 
                 
                 
@@ -970,11 +988,71 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect sqlite does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
-                  "The dialect sqlite does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -983,22 +1061,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -1039,27 +1101,11 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
+                  null,
                 
                 
                 
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=ERROR was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=SATURATE was requested",
-                
-                
-                
-                  "The dialect datafusion expects overflow=SILENT but overflow=SATURATE was requested",
+                  null,
                 
                 
                 
@@ -1071,7 +1117,63 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect datafusion expects rounding=TIE_TO_EVEN but rounding=FLOOR was requested",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1080,22 +1182,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
@@ -1112,7 +1198,23 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
             examples: [
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1136,7 +1238,15 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> error",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1152,23 +1262,39 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> i8",
+                  null,
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(i8, i8) -> undefined",
+                  null,
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
                 
                 
                 
-                  "The dialect postgres does not support the kernel add(fp32, fp32) -> fp32",
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
+                
+                
+                
+                  null,
                 
                 
                 
@@ -1177,22 +1303,6 @@ guaranteed to be true for integer addition when overflow is SILENT.</p></dd>
                 
             ],
             kernels: [
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
-                
-                false,
-                
-                true,
-                
-                true,
-                
-                true,
                 
                 true,
                 
